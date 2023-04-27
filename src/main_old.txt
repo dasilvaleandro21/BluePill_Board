@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define RCC_APB2ENR  (*( ( volatile unsigned int * )0x40021018 ) ) 
+#define GPIOC_CRH  (*( ( volatile unsigned int * )0x40011004 ) ) 
+#define GPIOC_BSRR  (*( ( volatile unsigned int * )0x40011010 ) ) 
+
+int main(){
+    
+    // Using varibles:
+    // int volatile * const RCC_APB2ENR = (int *) 0x40021018;
+    // int volatile * const GPIOC_CRH = (int *) 0x40011004;
+    // int volatile * const GPIOC_BSRR = (int *) 0x40011010;
+    // *RCC_APB2ENR |= (1<<4);   // Enable GPIOC Clock
+    // *GPIOC_CRH &= ~(0xF<<20); // Clear Bits 23:22:21:20
+    // *GPIOC_CRH |= (0x11<<20); // PC13 Output mode 50 MHz, push pull
+    // *GPIOC_BSRR |= (1<<13);   // Set the pin PC13
+    // *GPIOC_BSRR |= (1<<29);   // RESET the pin PC13
+
+
+    // Using defines:
+    RCC_APB2ENR |= (1<<4);   // Enable GPIOC Clock
+    GPIOC_CRH &= ~(0xF<<20); // Clear Bits 23:22:21:20
+    GPIOC_CRH |= (0x11<<20); // PC13 Output mode 50 MHz, push pull
+    GPIOC_BSRR |= (1<<13);   // Set the pin PC13
+    GPIOC_BSRR |= (1<<29);   // RESET the pin PC13
+
+
+
+
+    int x  = 1000000;
+
+    while(1){
+        while(x>1){x--;}
+        x = 50000;
+        GPIOC_BSRR |= (1<<13);  // Set the pin PC13
+        while(x>1){x--;}
+        x = 200000;
+        GPIOC_BSRR |= (1<<29);  // RESET the pin PC13
+    }
+
+    return 0;
+}
+
+
+void SysTick_Handler(void){
+ 
+
+    HAL_IncTick();
+ 
+
+    HAL_SYSTICK_IRQHandler();
+ 
+
+}
